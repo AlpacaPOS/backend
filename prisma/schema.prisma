@@ -10,19 +10,19 @@ datasource db {
 }
 
 model Product {
-  id         Int      @id @default(autoincrement()) @map("product_id")
-  name       String   @db.VarChar(30)
-  price      Float    @db.Float
-  quantity   Int      @default(0) @db.UnsignedMediumInt
-  discount   Int      @default(0) @db.UnsignedTinyInt
-  image      String?  @db.Text
-  categoryId Int      @map("category_id")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  category   Category @relation(fields: [categoryId], references: [id])
-  Stock      Stock[]
-
+  id          Int           @id @default(autoincrement()) @map("product_id")
+  name        String        @db.VarChar(30)
+  price       Float         @db.Float
+  quantity    Int           @default(0) @db.UnsignedMediumInt
+  discount    Int           @default(0) @db.UnsignedTinyInt
+  image       String?       @db.Text
+  categoryId  Int           @map("category_id")
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  category    Category      @relation(fields: [categoryId], references: [id])
+  Stock       Stock[]
   OrderDetail OrderDetail[]
+
   @@index([name])
   @@map("products")
 }
@@ -81,32 +81,31 @@ model UserType {
 
 model Member {
   id        Int      @id @default(autoincrement()) @map("member_id")
-  email     String   @db.VarChar(50)
-  password  String   @db.Text
+  email     String?  @db.VarChar(50)
   firstname String   @db.VarChar(30)
   lastname  String   @db.VarChar(30)
   phone     String   @db.VarChar(10)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Order     Order[]
 
-  Order Order[]
   @@unique([email, phone])
   @@index([email])
   @@map("members")
 }
 
 model Order {
-  id            Int         @id @default(autoincrement()) @map("order_id")
-  orderStatusId Int         @map("order_status_id")
-  userId        Int         @map("user_id")
-  memberId      Int         @map("member_id")
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  orderStatus   OrderStatus @relation(fields: [orderStatusId], references: [id])
-  user          User        @relation(fields: [userId], references: [id])
-  member        Member      @relation(fields: [memberId], references: [id])
+  id            Int           @id @default(autoincrement()) @map("order_id")
+  orderStatusId Int           @map("order_status_id")
+  userId        Int           @map("user_id")
+  memberId      Int           @map("member_id")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  orderStatus   OrderStatus   @relation(fields: [orderStatusId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
+  member        Member        @relation(fields: [memberId], references: [id])
+  OrderDetail   OrderDetail[]
 
-  OrderDetail OrderDetail[]
   @@map("orders")
 }
 
