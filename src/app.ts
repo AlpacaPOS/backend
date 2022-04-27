@@ -1,6 +1,7 @@
 import fastify, { FastifyServerOptions } from 'fastify'
 import categoryRouters from './routes/category'
 import employeeRouters from './routes/employee'
+import memberRouters from './routes/member'
 import productRouters from './routes/product'
 import stockRouters from './routes/stock'
 
@@ -11,6 +12,7 @@ const buildApp = (options: FastifyServerOptions) => {
   app.register(productRouters, { prefix: '/products' })
   app.register(stockRouters, { prefix: 'stocks' })
   app.register(employeeRouters, { prefix: '/employees' })
+  app.register(memberRouters, { prefix: '/members' })
 
   return app
 }
