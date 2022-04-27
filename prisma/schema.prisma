@@ -57,7 +57,6 @@ model User {
   firstname  String   @db.VarChar(30)
   lastname   String   @db.VarChar(30)
   phone      String   @db.VarChar(10)
-  image      String   @db.Text
   userTypeId Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
