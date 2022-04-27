@@ -1,4 +1,5 @@
 import fastify, { FastifyServerOptions } from 'fastify'
+import cors from '@fastify/cors'
 import categoryRouters from './routes/category'
 import employeeRouters from './routes/employee'
 import memberRouters from './routes/member'
@@ -8,6 +9,8 @@ import stockRouters from './routes/stock'
 
 const buildApp = (options: FastifyServerOptions) => {
   const app = fastify(options)
+
+  app.register(cors)
 
   app.register(categoryRouters, { prefix: '/categories' })
   app.register(productRouters, { prefix: '/products' })
