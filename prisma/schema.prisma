@@ -13,9 +13,9 @@ model Product {
   id         Int      @id @default(autoincrement()) @map("product_id")
   name       String   @db.VarChar(30)
   price      Float    @db.Float
-  quantity   Int      @db.UnsignedMediumInt
-  discount   Int      @db.UnsignedTinyInt
-  image      String   @db.Text
+  quantity   Int      @default(0) @db.UnsignedMediumInt
+  discount   Int      @default(0) @db.UnsignedTinyInt
+  image      String   @default("") @db.Text
   categoryId Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
