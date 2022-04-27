@@ -1,0 +1,137 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Product {
+  id         Int      @id @default(autoincrement()) @map("product_id")
+  name       String   @db.VarChar(30)
+  price      Float    @db.Float
+  quantity   Int      @db.UnsignedMediumInt
+  discount   Int      @db.UnsignedTinyInt
+  image      String   @db.Text
+  categoryId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  category   Category @relation(fields: [categoryId], references: [id])
+  Stock      Stock[]
+
+  OrderDetail OrderDetail[]
+  @@index([name])
+  @@map("products")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement()) @map("category_id")
+  name      String    @db.VarChar(30)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
+
+  @@index([name])
+  @@map("categories")
+}
+
+model Stock {
+  id        Int      @id @default(autoincrement()) @map("stock_id")
+  quantity  Int      @db.UnsignedMediumInt
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+
+
+  @@map("stocks")
+}
+
+model User {
+  id         Int      @id @default(autoincrement()) @map("user_id")
+  email      String   @db.VarChar(50)
+  password   String   @db.Text
+  firstname  String   @db.VarChar(30)
+  lastname   String   @db.VarChar(30)
+  phone      String   @db.VarChar(10)
+  image      String   @db.Text
+  userTypeId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  userType   UserType @relation(fields: [userTypeId], references: [id])
+
+  Order Order[]
+  @@unique([email, phone])
+  @@index([email])
+  @@map("users")
+}
+
+model UserType {
+  id        Int      @id @default(autoincrement()) @map("user_type_id")
+  name      String   @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User[]
+
+  @@unique([name])
+  @@map("user_types")
+}
+
+model Member {
+  id        Int      @id @default(autoincrement()) @map("member_id")
+  email     String   @db.VarChar(50)
+  password  String   @db.Text
+  firstname String   @db.VarChar(30)
+  lastname  String   @db.VarChar(30)
+  phone     String   @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Order Order[]
+  @@unique([email, phone])
+  @@index([email])
+  @@map("members")
+}
+
+model Order {
+  id            Int         @id @default(autoincrement()) @map("order_id")
+  orderStatusId Int
+  userId        Int
+  memberId      Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  orderStatus   OrderStatus @relation(fields: [orderStatusId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  member        Member      @relation(fields: [memberId], references: [id])
+
+  OrderDetail OrderDetail[]
+  @@map("orders")
+}
+
+model OrderStatus {
+  id        Int      @id @default(autoincrement()) @map("order_status_id")
+  name      String   @db.VarChar(30)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Order     Order[]
+
+  @@unique([name])
+  @@map("order_status")
+}
+
+model OrderDetail {
+  id        Int      @id @default(autoincrement()) @map("order_detail_id")
+  price     Float    @db.Float
+  quantity  Int      @db.UnsignedMediumInt
+  productId Int
+  orderId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+
+  @@map("order_details")
+}
