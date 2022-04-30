@@ -23,7 +23,9 @@ export const getEmployee = async (req: GetEmployeeRequest, res: FastifyReply) =>
   try {
     const { employeeId } = req.params
 
-    const employee = await prisma.user.findUnique({ where: { id: Number(employeeId) } })
+    const employee = await prisma.user.findFirst({
+      where: { AND: [{ id: Number(employeeId) }, { userTypeId: 2 }] },
+    })
 
     return res.send(employee)
   } catch (error) {
