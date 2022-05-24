@@ -4,7 +4,18 @@ import { AddStockRequest, GetStockRequest } from '../types/handlers/stock'
 
 export const getStocks = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    const stocks = await prisma.stock.findMany()
+    const stocks = await prisma.stock.findMany({
+      include: {
+        product: {
+          select: {
+            name: true,
+            category: {
+              select: { name: true },
+            },
+          },
+        },
+      },
+    })
 
     return res.send(stocks)
   } catch (error) {
