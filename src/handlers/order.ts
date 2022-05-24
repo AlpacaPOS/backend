@@ -24,7 +24,11 @@ export const getOrder = async (req: GetOrderRequest, res: FastifyReply) => {
     const { orderId } = req.params
 
     const order = await prisma.order.findUnique({
-      include: { OrderDetail: true },
+      include: {
+        OrderDetail: { select: { price: true, quantity: true } },
+        member: { select: { firstname: true, lastname: true } },
+        user: { select: { firstname: true, lastname: true } },
+      },
       where: { id: Number(orderId) },
     })
 
@@ -37,24 +41,39 @@ export const getOrder = async (req: GetOrderRequest, res: FastifyReply) => {
 export const addOrder = async (req: AddOrderRequest, res: FastifyReply) => {
   try {
     let { orderDetails, userId, memberId } = req.body
+    let totals
 
-    if (!memberId) {
-      memberId = 1
+    for (const orderDetail of orderDetails) {
+      totals = orderDetail.price * orderDetail.quantity
     }
 
-    const order = await prisma.order.create({
-      data: {
-        memberId,
-        userId,
-        OrderDetail: {
-          createMany: { data: orderDetails },
+    if (memberId) {
+      const order = await prisma.order.create({
+        data: {
+          memberId,
+          userId,
+          total: totals,
+          OrderDetail: {
+            createMany: { data: orderDetails },
+          },
+          orderStatusId: 1,
         },
-        orderStatusId: 1,
-      },
-      include: { OrderDetail: true },
-    })
-
-    return res.status(201).send(order)
+        include: { OrderDetail: true },
+      })
+      return res.status(201).send(order)
+    } else {
+      const order = await prisma.order.create({
+        data: {
+          userId,
+          OrderDetail: {
+            createMany: { data: orderDetails },
+          },
+          orderStatusId: 1,
+        },
+        include: { OrderDetail: true },
+      })
+      return res.status(201).send(order)
+    }
   } catch (error) {
     return res.status(400).send(error)
   }
@@ -67,6 +86,34 @@ export const paymentOrder = async (req: PaymentOrderRequest, res: FastifyReply) 
     const order = await prisma.order.update({
       data: { orderStatusId: 2 },
       where: { id: orderId },
+      select: {
+        OrderDetail: {
+          select: {
+            id: true,
+            product: {
+              select: {
+                name: true,
+              },
+            },
+            price: true,
+            quantity: true,
+          },
+        },
+        member: {
+          select: {
+            firstname: true,
+            lastname: true,
+          },
+        },
+        user: {
+          select: {
+            firstname: true,
+            lastname: true,
+          },
+        },
+        updatedAt: true,
+        total: true,
+      },
     })
 
     return res.send(order)
