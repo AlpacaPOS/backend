@@ -41,10 +41,10 @@ export const getOrder = async (req: GetOrderRequest, res: FastifyReply) => {
 export const addOrder = async (req: AddOrderRequest, res: FastifyReply) => {
   try {
     let { orderDetails, userId, memberId } = req.body
-    let totals
 
+    let totals = 0
     for (const orderDetail of orderDetails) {
-      totals = orderDetail.price * orderDetail.quantity
+      totals += orderDetail.price * orderDetail.quantity
     }
 
     if (memberId) {
@@ -65,6 +65,7 @@ export const addOrder = async (req: AddOrderRequest, res: FastifyReply) => {
       const order = await prisma.order.create({
         data: {
           userId,
+          total: totals,
           OrderDetail: {
             createMany: { data: orderDetails },
           },
