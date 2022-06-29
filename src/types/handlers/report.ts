@@ -11,3 +11,9 @@ export type GetDailyBestSeller = FastifyRequest<{
     date: string
   }
 }>
+
+export type GetEmployeeSellRequest = FastifyRequest<{
+  Body: {
+    employeeId: number
+  }
+}>
