@@ -14,7 +14,10 @@ import authRouters from './routes/auth'
 const buildApp = (options: FastifyServerOptions) => {
   const app = fastify(options)
 
-  app.register(cors)
+  app.register(cors, {
+    credentials: true,
+    origin: 'http://localhost:3001',
+  })
 
   app.register(cookie, {} as FastifyCookieOptions)
 
