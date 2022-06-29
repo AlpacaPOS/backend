@@ -10,13 +10,14 @@ import stockRouters from './routes/stock'
 import discountRouters from './routes/discount'
 import reportRouters from './routes/reports'
 import authRouters from './routes/auth'
+import config from './config'
 
 const buildApp = (options: FastifyServerOptions) => {
   const app = fastify(options)
 
   app.register(cors, {
     credentials: true,
-    origin: 'http://localhost:3001',
+    origin: config.origin,
   })
 
   app.register(cookie, {} as FastifyCookieOptions)

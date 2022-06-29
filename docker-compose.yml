@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: alpaca_backend
+    build: .
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "${PORT}:${PORT}"
+
+networks:
+  default:
+    external:
+      name: nginx
