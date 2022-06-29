@@ -9,4 +9,4 @@ const options: FastifyServerOptions = {
 
 const app = buildApp(options)
 
-app.listen({ host: config.host, port: config.port })
+app.listen({ host: config.host, port: Number(config.port) })
