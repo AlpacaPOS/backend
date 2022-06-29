@@ -9,4 +9,4 @@ const options: FastifyServerOptions = {
 
 const app = buildApp(options)
 
-app.listen(config.port)
+app.listen({ port: 3000 })
