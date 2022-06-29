@@ -6,6 +6,7 @@ import {
   getBestSeller,
   getEmployeeSell,
   getSellByMonth,
+  getBestCategory,
 } from '../handlers/report'
 
 const reportRouters = async (app: FastifyInstance) => {
@@ -14,6 +15,7 @@ const reportRouters = async (app: FastifyInstance) => {
   app.get('/totalsell', getTotalSell)
 
   app.get('/bestseller', getBestSeller)
+  app.get('/bestcategory', getBestCategory)
   app.post('/employeesell', getEmployeeSell)
   app.post('/sellbymonth', getSellByMonth)
 }
