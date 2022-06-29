@@ -1,11 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { prisma } from '../helpers/utils'
-import {
-  AddOrderRequest,
-  CancelOrderRequest,
-  GetOrderRequest,
-  PaymentOrderRequest,
-} from '../types/handlers/order'
+import { AddOrderRequest, CancelOrderRequest, GetOrderRequest, PaymentOrderRequest } from '../types/handlers/order'
 
 export const getOrders = async (req: FastifyRequest, res: FastifyReply) => {
   try {
@@ -48,6 +43,14 @@ export const addOrder = async (req: AddOrderRequest, res: FastifyReply) => {
     }
 
     if (memberId) {
+      const discount = await prisma.discount.findFirst({ select: { discount: true } })
+
+      if (discount) {
+        const discounted = (totals * discount.discount) / 100
+
+        totals = totals - discounted
+      }
+
       const order = await prisma.order.create({
         data: {
           memberId,
