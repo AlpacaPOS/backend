@@ -1,6 +1,11 @@
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { prisma } from '../helpers/utils'
-import { GetDailySellRequest, GetDailyBestSeller, GetEmployeeSellRequest } from '../types/handlers/report'
+import {
+  GetDailySellRequest,
+  GetDailyBestSeller,
+  GetEmployeeSellRequest,
+  GetMonthlySellRequest,
+} from '../types/handlers/report'
 
 export const getDailySell = async (req: GetDailySellRequest, res: FastifyReply) => {
   try {
@@ -55,7 +60,33 @@ export const getEmployeeSell = async (req: GetEmployeeSellRequest, res: FastifyR
   }
 }
 
-export const getSellByMonth = async (req: FastifyRequest, res: FastifyReply) => {}
+export const getSellByMonth = async (req: GetMonthlySellRequest, res: FastifyReply) => {
+  try {
+    const { date } = req.body
+    const selectDate = new Date(date)
+    const startDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), 1)
+    const endDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), 30)
+
+    const orders = await prisma.order.findMany({
+      select: {
+        total: true,
+      },
+      where: {
+        AND: [{ updatedAt: { gte: startDate } }, { updatedAt: { lte: endDate } }, { orderStatusId: 2 }],
+      },
+    })
+
+    let monthlySell = 0
+
+    for (const order of orders) {
+      monthlySell += order.total || 0
+    }
+
+    return res.send({ total: monthlySell })
+  } catch (error) {
+    return res.status(500).send({ error: error })
+  }
+}
 
 export const getDailyBestSeller = async (req: GetDailyBestSeller, res: FastifyReply) => {
   try {
