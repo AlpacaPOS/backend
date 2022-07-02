@@ -15,11 +15,10 @@ model Product {
   price       Float         @db.Float
   quantity    Int           @default(0) @db.UnsignedMediumInt
   discount    Int           @default(0) @db.UnsignedTinyInt
-  image       String?       @db.Text
   categoryId  Int           @map("category_id")
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  category    Category      @relation(fields: [categoryId], references: [id])
+  category    Category      @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: Restrict)
   Stock       Stock[]
   OrderDetail OrderDetail[]
 
@@ -44,7 +43,7 @@ model Stock {
   productId Int      @map("product_id")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Restrict)
 
 
   @@map("stocks")
@@ -60,7 +59,7 @@ model User {
   userTypeId Int      @map("user_type_id")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  userType   UserType @relation(fields: [userTypeId], references: [id])
+  userType   UserType @relation(fields: [userTypeId], references: [id], onUpdate: Cascade, onDelete: Restrict)
 
   Order Order[]
   @@unique([email, phone])
@@ -102,9 +101,9 @@ model Order {
   memberId      Int?          @map("member_id")
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  orderStatus   OrderStatus   @relation(fields: [orderStatusId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
-  member        Member?       @relation(fields: [memberId], references: [id])
+  orderStatus   OrderStatus   @relation(fields: [orderStatusId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  user          User          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  member        Member?       @relation(fields: [memberId], references: [id], onUpdate: Cascade, onDelete: Restrict)
   OrderDetail   OrderDetail[]
 
   @@map("orders")
@@ -129,8 +128,8 @@ model OrderDetail {
   orderId   Int      @map("order_id")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  product   Product  @relation(fields: [productId], references: [id])
-  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  order     Order    @relation(fields: [orderId], references: [id], onUpdate: Cascade, onDelete: Restrict)
 
   @@map("order_details")
 }
