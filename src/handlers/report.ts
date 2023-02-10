@@ -11,15 +11,27 @@ export const getDailySell = async (req: GetDailySellRequest, res: FastifyReply) 
   try {
     const { date } = req.body
     const selectDate = new Date(date)
-    const startDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), selectDate.getDate())
-    const endDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), selectDate.getDate() + 1)
+    const startDate = new Date(
+      selectDate.getUTCFullYear(),
+      selectDate.getMonth(),
+      selectDate.getDate()
+    )
+    const endDate = new Date(
+      selectDate.getUTCFullYear(),
+      selectDate.getMonth(),
+      selectDate.getDate() + 1
+    )
 
     const orders = await prisma.order.findMany({
       select: {
         total: true,
       },
       where: {
-        AND: [{ updatedAt: { gte: startDate } }, { updatedAt: { lte: endDate } }, { orderStatusId: 2 }],
+        AND: [
+          { updatedAt: { gte: startDate } },
+          { updatedAt: { lte: endDate } },
+          { orderStatusId: 2 },
+        ],
       },
     })
 
@@ -72,7 +84,11 @@ export const getSellByMonth = async (req: GetMonthlySellRequest, res: FastifyRep
         total: true,
       },
       where: {
-        AND: [{ updatedAt: { gte: startDate } }, { updatedAt: { lte: endDate } }, { orderStatusId: 2 }],
+        AND: [
+          { updatedAt: { gte: startDate } },
+          { updatedAt: { lte: endDate } },
+          { orderStatusId: 2 },
+        ],
       },
     })
 
@@ -92,8 +108,16 @@ export const getDailyBestSeller = async (req: GetDailyBestSeller, res: FastifyRe
   try {
     const { date } = req.body
     const selectDate = new Date(date)
-    const startDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), selectDate.getDate())
-    const endDate = new Date(selectDate.getUTCFullYear(), selectDate.getMonth(), selectDate.getDate() + 1)
+    const startDate = new Date(
+      selectDate.getUTCFullYear(),
+      selectDate.getMonth(),
+      selectDate.getDate()
+    )
+    const endDate = new Date(
+      selectDate.getUTCFullYear(),
+      selectDate.getMonth(),
+      selectDate.getDate() + 1
+    )
 
     const orders = await prisma.order.findMany({
       select: {
@@ -102,11 +126,15 @@ export const getDailyBestSeller = async (req: GetDailyBestSeller, res: FastifyRe
         },
       },
       where: {
-        AND: [{ updatedAt: { gte: startDate } }, { updatedAt: { lte: endDate } }, { orderStatusId: 2 }],
+        AND: [
+          { updatedAt: { gte: startDate } },
+          { updatedAt: { lte: endDate } },
+          { orderStatusId: 2 },
+        ],
       },
     })
 
-    let productList = []
+    let productList: any[] = []
 
     for (const order of orders) {
       for (const orderDetail of order.OrderDetail) {
@@ -151,7 +179,7 @@ export const getBestSeller = async (req: FastifyRequest, res: FastifyReply) => {
       },
     })
 
-    let productList = []
+    let productList: any[] = []
 
     for (const order of orders) {
       for (const orderDetail of order.OrderDetail) {
@@ -188,7 +216,10 @@ export const getBestCategory = async (req: FastifyRequest, res: FastifyReply) =>
     const orders = await prisma.order.findMany({
       select: {
         OrderDetail: {
-          select: { product: { select: { category: { select: { id: true, name: true } } } }, quantity: true },
+          select: {
+            product: { select: { category: { select: { id: true, name: true } } } },
+            quantity: true,
+          },
         },
       },
       where: {
@@ -196,7 +227,7 @@ export const getBestCategory = async (req: FastifyRequest, res: FastifyReply) =>
       },
     })
 
-    let categoryList = []
+    let categoryList: any[] = []
 
     for (const order of orders) {
       for (const orderDetail of order.OrderDetail) {
