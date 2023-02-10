@@ -41,6 +41,18 @@ export const addStock = async (req: AddStockRequest, res: FastifyReply) => {
 
     const stock = await prisma.stock.create({ data: { productId, quantity } })
 
+    const product = await prisma.product.findUnique({
+      select: { quantity: true },
+      where: { id: stock.productId },
+    })
+
+    if (product?.quantity) {
+      await prisma.product.update({
+        data: { quantity: stock.quantity },
+        where: { id: stock.productId },
+      })
+    }
+
     return res.status(201).send(stock)
   } catch (error) {
     return res.status(400).send({ error: error })
