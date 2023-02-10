@@ -1,17 +1,36 @@
 version: '3.8'
 
 services:
-  backend:
-    container_name: alpaca_backend
-    build: .
+  api:
+    container_name: alpaca_pos_api
+    build:
+      context: .
+      target: dev
+    depends_on:
+      - db
     env_file:
       - ./.env
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
     ports:
-      - "${PORT}:${PORT}"
+      - 3000:3000
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    networks:
+      - web
+    command: yarn dev
+  
+  db:
+    image: mariadb
+    container_name: alpaca_pos_db
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+    networks:
+      - web
 
 networks:
-  default:
-    external:
-      name: nginx
+  web:
+    external: true
